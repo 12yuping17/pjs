@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Judge Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+    input, select, textarea { width: 100%; padding: 8px; margin: 5px 0; }
+    button { padding: 10px 20px; margin-top: 10px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<h2>Judge Login</h2>
+<div id="loginSection">
+  <label>Judge Name:</label>
+  <input type="text" id="judgeName" placeholder="Enter judge's name">
+  <label>Password:</label>
+  <input type="password" id="password" placeholder="Enter password">
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="formSection" class="hidden">
+  <h2>Computer Science Project Evaluation</h2>
+  <p>Group Members: <input type="text" id="groupMembers"></p>
+  <p>Group Number: <input type="text" id="groupNumber"></p>
+  <p>Project Title: <input type="text" id="projectTitle"></p>
+
+  <h3>Criteria (Please enter scores for each)</h3>
+  <label>Clear articulation of requirements (0-15): <input type="number" id="criteria1"></label>
+  <label>Appropriate tools and methods chosen (0-15): <input type="number" id="criteria2"></label>
+  <label>Clear and coherent oral presentation (0-15): <input type="number" id="criteria3"></label>
+  <label>Effective teamwork (0-15): <input type="number" id="criteria4"></label>
+
+  <p>Judge's Name: <input type="text" id="judgeNameDisplay" readonly></p>
+  <p>Comments: <textarea id="comments"></textarea></p>
+
+  <button onclick="submitForm()">Submit Evaluation</button>
+</div>
+
+
+<div id="adminPageSection" class="hidden">
+  <button onclick="goToAdminPage()">Go to Admin Page</button>
+</div>
+
+<h3 id="statusMessage" class="hidden"></h3>
+
+<script>
+// Judge 
+const judgePasswords = {
+  "Judge1": "password1",
+  "Judge2": "password2",
+  "Judge3": "password3",
+  "Judge4": "password4"
+};
+
+
+function login() {
+  const name = document.getElementById("judgeName").value;
+  const pass = document.getElementById("password").value;
+
+  if (judgePasswords[name] && judgePasswords[name] === pass) {
+    document.getElementById("loginSection").classList.add("hidden");
+    document.getElementById("formSection").classList.remove("hidden");
+    document.getElementById("judgeNameDisplay").value = name;
+  } else {
+    alert("Invalid username or password!");
+  }
+}
+
+function submitForm() {
+  const criteria1 = parseInt(document.getElementById("criteria1").value || 0);
+  const criteria2 = parseInt(document.getElementById("criteria2").value || 0);
+  const criteria3 = parseInt(document.getElementById("criteria3").value || 0);
+  const criteria4 = parseInt(document.getElementById("criteria4").value || 0);
+
+  const totalScore = criteria1 + criteria2 + criteria3 + criteria4;
+
+  const data = {
+    groupMembers: document.getElementById("groupMembers").value,
+    groupNumber: document.getElementById("groupNumber").value,
+    projectTitle: document.getElementById("projectTitle").value,
+    judgeName: document.getElementById("judgeNameDisplay").value,
+    criteria1,
+    criteria2,
+    criteria3,
+    criteria4,
+    total: totalScore,
+    comments: document.getElementById("comments").value,
+    timestamp: new Date()
+  };
+
+  // Simulate saving
+  let evaluations = JSON.parse(localStorage.getItem("evaluations")) || [];
+  evaluations.push(data);
+  localStorage.setItem("evaluations", JSON.stringify(evaluations));
+
+  // Show message 
+  document.getElementById("statusMessage").textContent = "Evaluation submitted successfully! You can now go to the admin page.";
+  document.getElementById("statusMessage").classList.remove("hidden");
+  document.getElementById("formSection").classList.add("hidden");
+  document.getElementById("adminPageSection").classList.remove("hidden");
+}
+
+function goToAdminPage() {
+  window.location.href = "admin.html"; 
+}
+</script>
+
+</body>
+</html>

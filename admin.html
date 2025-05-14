@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
+  </style>
+</head>
+<body>
+
+<h2>Admin Dashboard</h2>
+<button onclick="logout()">Logout</button>
+
+<h3>Group Evaluation Averages</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Group Number</th>
+      <th>Group Members</th>
+      <th>Project Title</th>
+      <th>Average Score</th>
+    </tr>
+  </thead>
+  <tbody id="averageScores"></tbody>
+</table>
+
+<script>
+function loadData() {
+  const evaluations = JSON.parse(localStorage.getItem("evaluations")) || [];
+  const groups = {};
+
+  evaluations.forEach(evaluation => {
+    const groupNumber = evaluation.groupNumber;
+    if (!groups[groupNumber]) {
+      groups[groupNumber] = { total: 0, count: 0, title: evaluation.projectTitle, members: evaluation.groupMembers };
+    }
+    groups[groupNumber].total += evaluation.total;
+    groups[groupNumber].count += 1;
+  });
+
+  const tbody = document.getElementById("averageScores");
+  tbody.innerHTML = "";
+
+  for (const group in groups) {
+    const avg = (groups[group].total / groups[group].count).toFixed(2);
+    const row = `<tr>
+      <td>${group}</td>
+      <td>${groups[group].members}</td>
+      <td>${groups[group].title}</td>
+      <td>${avg}</td>
+    </tr>`;
+    tbody.innerHTML += row;
+  }
+}
+
+
+function logout() {
+  window.location.href = "index.html";
+}
+
+
+loadData();
+</script>
+
+</body>
+</html>
+
